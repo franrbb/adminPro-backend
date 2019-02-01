@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
+var mongoose = require('mongoose'); //Trabajar con modelos
+var uniqueValidator = require('mongoose-unique-validator'); //Campo unico
 
 var Schema = mongoose.Schema;
 

@@ -1,5 +1,5 @@
-var express = require('express');
-var bcrypt = require('bcryptjs');
+var express = require('express'); //Trabajar con rutas
+var bcrypt = require('bcryptjs'); //Encriptar contraseña
 var mdAutenticacion = require('../middlewares/autenticacion');
 
 var app = express();
@@ -8,20 +8,30 @@ var Usuario = require('../models/usuario');
 
 //OBTENER USUARIOS
 app.get('/', (req, res, next) => {
-    Usuario.find({}, 'nombre email img role', (err, usuarios) => {
-        if (err) {
-            return res.status(500).json({
-                ok: false,
-                mensaje: 'Error al leer',
-                errors: err
-            });
-        }
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
 
-        res.status(200).json({
-            ok: true,
-            usuarios: usuarios
-        });
-    });
+    Usuario.find({}, 'nombre email img role')
+        .skip(desde)
+        .limit(5)
+        .exec(
+            (err, usuarios) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error al leer',
+                        errors: err
+                    });
+                }
+
+                Usuario.countDocuments({}, (err, conteo) => {
+                    res.status(200).json({
+                        ok: true,
+                        usuarios: usuarios,
+                        total: conteo
+                    });
+                });
+            });
 });
 
 //CREAR USUARIOS
